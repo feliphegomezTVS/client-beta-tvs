@@ -1,0 +1,10 @@
+<div>
+    <form method="post" v-on:submit="formSubmit" action="javascript:return;">
+        <input v-model="formLogin.username" type="text" required="true" />
+        <input v-model="formLogin.password" type="text" required="true" />
+        <button type="submit">Login</button>
+    </form>
+    <div>
+        <p>{{messageFormLogin}}</p>
+    </div>
+</div>
