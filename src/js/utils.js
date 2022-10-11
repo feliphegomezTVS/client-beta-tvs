@@ -61,9 +61,9 @@ const utilsClient = {
       var sendButton = document.getElementById("sendButton");
 
       self.client.standbyBox = document.getElementById("standby");
-      var goBox = document.getElementById("go");
-      var fadeBox = document.getElementById("fade");
-      var offBox = document.getElementById("off");
+      self.client.goBox = document.getElementById("go");
+      self.client.fadeBox = document.getElementById("fade");
+      self.client.offBox = document.getElementById("off");
 
       // Send message
       sendButton.addEventListener('click', function () {
