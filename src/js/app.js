@@ -13,10 +13,16 @@ const vstyle = {
 	},
 }
 
+const vStyle = {
+	render: function(createElement) {
+		return createElement('style', this.$slots.default)
+	}
+};
+
 // 5. Create and mount the root instance.
 const app = Vue.createApp({
 	components: {
-		vstyle
+		vStyle
 	},
 	data: () => ({
 		definition: null,

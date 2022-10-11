@@ -13,11 +13,6 @@
 		<script src="https://unpkg.com/vue-router@4"></script>
 		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 		<script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
-		<script src="/src/js/utils.js"></script>
-		<script src="/src/js/api.js"></script>
-		<script src="/src/js/auth.js"></script>
-		<script src="/src/js/router.js"></script>
-		<script src="/src/js/app.js"></script>
 	</head>
 	<body>
 		<div id="app">
@@ -25,6 +20,125 @@
 			<!-- component matched by the route will render here -->
 			<router-view></router-view>
 		</div>
+		<script src="/src/js/utils.js"></script>
+		<script src="/src/js/api.js"></script>
+		<script src="/src/js/auth.js"></script>
+		<script src="/views/diagnostic/diagnostic.js"></script>
+		
+		<script src="/views/test/send.js"></script>
+		<script src="/views/test/receive.js"></script>
+
+		<script src="/src/js/router.js"></script>
+		<script src="/src/js/app.js"></script>
 		<script src="/main.js"></script>
+		<style>
+			body {
+				font-family: 'DejaVu Sans', Arial, Helvetica, sans-serif;
+				background-color: white;
+				min-width: 450px;
+			}
+			
+			h1 {
+				font-size: 1.75em;
+			}
+			
+			h2 {
+				text-align: center;
+				font-size: 4em; 
+			}
+			
+			td {
+				width: 50%;
+			}
+			
+			input {
+				margin-bottom: 5px;
+			}
+			
+			a:visited{ 
+				color: blue; 
+			}
+			
+			.display {
+				width: 100%;
+				min-height: 400px;
+				padding-bottom: 20px;
+			}
+			
+			.control {
+				width: 100%;
+				padding-bottom: 20px;
+			}
+			
+			.control-button {
+				width: 100%;
+				min-height: 50px;
+			}
+			
+			.display-box {
+				border: 2px solid black;
+			}
+			
+			.title {
+				vertical-align: top;
+			}
+			
+			.standby {
+				background-color: red;
+			}
+			
+			.go {
+				background-color: green;
+			}
+			
+			.fade {
+				background-color: yellow;
+			}
+			
+			.off {
+				background-color: gray;
+			}
+			
+			.hidden {
+				visibility: hidden;
+			}
+			
+			.no-display {
+				display: none;
+			}
+			
+			.status {
+				height: 125px;
+				vertical-align: text-top;
+				font-weight: bold;
+				margin-bottom: 10px;
+				border-bottom: 2px solid black;
+				
+			}
+			
+			.message {
+				height: 125px;
+				max-height: 125px;
+				margin-bottom: 10px;
+				border-bottom: 2px solid black;
+				overflow: auto;
+			}
+			
+			.msg-time {
+				color: blue;
+			}
+			
+			.cueMsg {
+				color: orange;
+			}
+			
+			.selfMsg {
+				color: green;
+			}
+			
+			.peerMsg {
+				color: red;
+			}
+		</style>
 	</body>
 </html>
