@@ -132,6 +132,7 @@ const utilsClient = {
       });
     },
     go() {
+      let self = this;
       self.client.standbyBox.className = "display-box hidden";
       self.client.goBox.className = "display-box go";
       self.client.fadeBox.className = "display-box hidden";
@@ -139,6 +140,7 @@ const utilsClient = {
       return;
     },
     fade() {
+      let self = this;
       self.client.standbyBox.className = "display-box hidden";
       self.client.goBox.className = "display-box hidden";
       self.client.fadeBox.className = "display-box fade";
@@ -146,6 +148,7 @@ const utilsClient = {
       return;
     },
     off() {
+      let self = this;
       self.client.standbyBox.className = "display-box hidden";
       self.client.goBox.className = "display-box hidden";
       self.client.fadeBox.className = "display-box hidden";
@@ -153,6 +156,7 @@ const utilsClient = {
       return;
     },
     reset() {
+      let self = this;
       self.client.standbyBox.className = "display-box standby";
       self.client.goBox.className = "display-box hidden";
       self.client.fadeBox.className = "display-box hidden";
@@ -166,19 +170,19 @@ const utilsClient = {
         switch (data) {
           case 'Go':
             console.log('command Go')
-            go();
+            self.go();
             break;
           case 'Fade':
             console.log('command Fade')
-            fade();
+            self.fade();
             break;
           case 'Off':
             console.log('command off')
-            off();
+            self.off();
             break;
           case 'Reset':
             console.log('command Reset')
-            reset();
+            self.reset();
             break;
           default:
             console.log(data);
