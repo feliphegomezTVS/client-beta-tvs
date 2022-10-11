@@ -50,7 +50,6 @@ const utilsClient = {
       conn: null,
       recvId: null,
       status: null,
-
       standbyBox: null,
     }
   }),
