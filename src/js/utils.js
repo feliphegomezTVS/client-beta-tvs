@@ -27,7 +27,10 @@ class LineBreakTransformer {
   }
 } 
 
-const utilsGlobal = {
+/**
+ * PeerJS
+ */
+const utilsGlobalPeerJS = {
   data: () => ({
     status: null,
     lastPeerId: null,
@@ -51,7 +54,6 @@ const utilsGlobal = {
       if (results == null) return null;
       else return results[1];
     },
-
     joinPeerSupplierToClient() {
       let self = this;
       console.log('joinPeerSupplier');
@@ -64,7 +66,6 @@ const utilsGlobal = {
         .on('data', self.rxPeerSupplier)
         .on('close', self.peerConnectionDestroyed);
     },
-    
     peerConnectionOpenClient(id) {
       console.log('Received null id from peer open');
       if (this.peer.id === null) this.peer.id = this.lastPeerId;
@@ -132,7 +133,7 @@ const utilsGlobal = {
 
     // RxT Peer
     rxPeerClient(dataIn) {
-      console.log('rxPeerClient', dataIn);
+      // console.log('rxPeerClient', dataIn);
       switch (dataIn) {
         case 'Go':
           console.log('command Go')
@@ -149,24 +150,38 @@ const utilsGlobal = {
     },
     txPeerClient(dataOutputPeer) {
       let self = this;
-      console.log('txPeerSupplier', dataOutputPeer);
+      // console.log('txPeerClient', dataOutputPeer);
       if (self.conn && self.conn.open) self.conn.send(dataOutputPeer);
       else console.log('Connection is closed');
     },
     rxPeerSupplier(dataIn) {
-      console.log('rxPeerSupplier', dataIn)
+      // console.log('rxPeerSupplier', dataIn);
+      switch (dataIn) {
+        case 'CommandOne':
+          console.log('command one')
+          break;
+        default:
+          console.log('default RX Supplier: ', dataIn);
+          this.txSerialSupplier(dataIn);
+          break;
+      }
+      // BufferArray
+      // if (!("TextDecoder" in window)) alert("Sorry, this browser does not support TextDecoder...");
+      // var enc = new TextDecoder("utf-8");
+      // var arr = new Uint8Array(dataIn);
+      // let value = enc.decode(arr);
     },
     txPeerSupplier(dataOutputPeer) {
       let self = this;
-      console.log('txPeerSupplier', dataOutputPeer);
+      // console.log('txPeerSupplier', dataOutputPeer);
       if (self.conn && self.conn.open) self.conn.send(dataOutputPeer);
       else console.log('Connection is closed');
     },
   },
 };
 
-const utilsClient = {
-  mixins: [utilsGlobal],
+const utilsClientPeerJS = {
+  mixins: [utilsGlobalPeerJS],
   mounted() {
     this.initializePeerClient();
   },
@@ -199,8 +214,8 @@ const utilsClient = {
   },
 };
 
-const utilsSupplier = {
-  mixins: [utilsGlobal],
+const utilsSupplierPeerJS = {
+  mixins: [utilsGlobalPeerJS],
   methods: {
     initializePeerSupplier() {
       let self = this;
@@ -213,13 +228,15 @@ const utilsSupplier = {
         .on('error', self.peerConnectionError);
     },
   },
-  
   mounted() {
     this.initializePeerSupplier(); // Since all our callbacks are setup, start the process of obtaining an ID
   },
 };
 
-const utilsClientSerial = {
+/**
+ * SERIAL
+ */
+const utilsGlobalSerial = {
   data: () => ({
     /* Data SerialPort */
     FG: {
@@ -233,7 +250,9 @@ const utilsClientSerial = {
       bufferSize: 8 * 1024, // 8Kb
       encoder: new TextEncoder(),
       toFlush: '',
-      terminalElement: HTMLInputElement || undefined,
+
+      outputDone: null,
+      outputStream: null,
     },
   }),
   methods: {
@@ -254,6 +273,54 @@ const utilsClientSerial = {
       }
       this.markDisconnected();
     },
+    connSerial(){
+      if (this.FG.port) this.disconnectFromPort();
+      else this.connectToPort();
+    },
+
+    // RxT Serial
+    rxSerialClient(dataIn) {
+      console.log('rxSerialClient', dataIn);
+      this.txPeerClient(dataIn);
+    },
+    txSerialClient(dataOutput) {
+      console.log('txSerialClient', dataOutput);
+      this.writeToStream(dataOutput);
+    },
+    rxSerialSupplier(dataIn) {
+      console.log('rxSerialSupplier', dataIn);
+      this.txPeerSupplier(dataIn);
+    },
+    async txSerialSupplier(dataOutput) {
+      console.log('txSerialSupplier', dataOutput);
+      this.writeToStream(dataOutput);
+    },
+    writeToStream(...lines) {
+      console.log('writeToStream', lines)
+      if (this.FG.outputStream !== null) {
+        const writer = this.FG.outputStream.getWriter();
+        lines.forEach((line) => {
+          // let lineWithoutEndOfLine = line.replace(/(\r\n|\n|\r)/gm, "");
+          let lineWithoutEndOfLine = line.replace(/[\r,\n]/gm, ""); // Se cambia ya que no esta borrando algunos espacios
+          writer.write(lineWithoutEndOfLine + "X");
+        });
+        writer.releaseLock();
+      }
+    },
+    async testSerialSend(){
+      // this.writeToStream("E98D7C316000000FEFF", "DF88020142999999999X")
+      const writer = this.FG.port.writable.getWriter();
+      const data = new Uint8Array([104, 101, 108, 108, 111]); // hello
+      await writer.write(data);
+      // Allow the serial port to be closed later.
+      writer.releaseLock();
+    }
+  },
+};
+
+const utilsClientSerial = {
+  mixins: [utilsGlobalSerial],
+  methods: {
     async connectToPort() {
       let self = this;
       try {
@@ -287,28 +354,7 @@ const utilsClientSerial = {
 
       while (self.FG.port && self.FG.port.readable) {
         try {
-          try {
-            console.log('Usando option 1')
-            // self.FG.reader = self.FG.port.readable.getReader({mode: 'byob'});
-            self.FG.reader = self.FG.port.readable
-            .pipeThrough(new TextDecoderStream())
-            .pipeThrough(new TransformStream(new LineBreakTransformer()))
-            .getReader();
-          }
-          catch {
-            console.log('Usando option 2')
-            let decoder = new TextDecoderStream();
-            const inputDone = self.FG.port.readable.pipeTo(decoder.writable);
-            const inputStream = decoder.readable.pipeThrough(new TransformStream(new LineBreakTransformer()));
-            self.FG.reader = inputStream.getReader();
-          }
 
-          for (;;) {
-            const { value, done } = await self.FG.reader.read();
-            if (value && self.info.a.test(value)) console.log('value', value);
-            if (done) break;
-          }
-          
           // Con buffer ----
           // let bufferSize = self.FG.bufferSize
           // try {
@@ -331,9 +377,9 @@ const utilsClientSerial = {
           //           return await self.FG.reader.read();
           //       }
           //   })();
-
           //   if (value) {
-          //     console.log('value', value, JSON.stringify(value))
+          //     // console.log('value', value, JSON.stringify(value));
+          //     self.rxSerialClient(value);
           //       // await new Promise<void>((resolve) => {
           //       //     self.FG.term.write(value, resolve);
           //       // });
@@ -344,6 +390,25 @@ const utilsClientSerial = {
           //       break;
           //   }
           // }
+         
+          try {
+            console.log('Usando option 1')
+            // self.FG.reader = self.FG.port.readable.getReader({mode: 'byob'});
+            self.FG.reader = self.FG.port.readable
+            .pipeThrough(new TextDecoderStream())
+            .pipeThrough(new TransformStream(new LineBreakTransformer()))
+            .getReader();
+          }
+          catch {
+            console.log('Usando option 2', 'pdte');
+          }
+
+          for (;;) {
+            const { value, done } = await self.FG.reader.read();
+            // if (value && self.info.a.test(value)) console.log('value', value);
+            if (value) self.rxSerialClient(value);
+            if (done) break;
+          }
         } catch (e) {
           console.error(e);
           console.log(`<ERROR: ${e.message}>`)
@@ -354,6 +419,7 @@ const utilsClientSerial = {
           }
         }
       }
+      this.streamWriter();
 
       if (self.FG.port) {
         try {
@@ -364,9 +430,100 @@ const utilsClientSerial = {
         this.markDisconnected();
       }
     },
-    connSerial(){
-      if (this.FG.port) this.disconnectFromPort();
-      else this.connectToPort();
+  },
+};
+
+const utilsSupplierSerial = {
+  mixins: [utilsGlobalSerial],
+  methods: {
+    async connectToPort() {
+      let self = this;
+      try {
+        const serial = navigator.serial;
+        self.FG.port = await serial.requestPort({});
+      } catch (e) {
+        console.log("Error abriendo el puerto.", e)
+        return;
+      }
+      
+      if (!self.FG.port) return;
+
+      const options = {
+        baudRate: 500000, // 115200
+        // dataBits: Number.parseInt(self.FG.dataBitsSelector.value),
+        // parity: self.FG.paritySelector.value as ParityType,
+        // stopBits: Number.parseInt(self.FG.stopBitsSelector.value),
+        // flowControl: self.FG.flowControlCheckbox.checked ? 'hardware' : 'none',
+      };
+      console.log(options);
+
+      try {
+        await self.FG.port.open(options);
+      } catch (e) {
+        console.error(e);
+        console.log(`<ERROR: ${e.message}>`);
+        self.markDisconnected();
+        return;
+      }
+      // Read Serial
+      const textDecoder = new TextDecoderStream();
+      const readableStreamClosed = self.FG.port.readable.pipeTo(textDecoder.writable);
+      while (self.FG.port && self.FG.port.readable) {
+        try {
+          try {
+            console.log('Usando option 1')
+            // self.FG.reader = self.FG.port.readable.getReader({mode: 'byob'});
+            self.FG.reader = textDecoder.readable.getReader();
+          }
+          catch {
+            console.log('Usando option 2', 'pdte');
+            self.FG.reader = self.FG.port.readable
+            .pipeThrough(new TextDecoderStream())
+            .pipeThrough(new TransformStream(new LineBreakTransformer()))
+            .getReader();
+          }
+
+          for (;;) {
+            const { value, done } = await self.FG.reader.read();
+            // if (value && self.info.a.test(value)) console.log('value', value);
+            if (value) self.rxSerialSupplier(value);
+            if (done) {
+              reader.releaseLock();
+              break;
+            }
+          }
+        } catch (e) {
+          console.error(e);
+          console.log(`<ERROR: ${e.message}>`)
+        } finally {
+          if (self.FG.reader) {
+            self.FG.reader.releaseLock();
+            self.FG.reader = undefined;
+          }
+        }
+      }
+    
+      // Write Serial
+      // this.FG.textEncoder = new TextEncoderStream();
+      // this.FG.writableStreamClosed = this.FG.textEncoder.readable.pipeTo(self.FG.port.writable);
+      // this.FG.outputStream = this.FG.textEncoder.writable;
+
+      // const textEncoder = new TextEncoderStream();
+      // const writableStreamClosed = textEncoder.readable.pipeTo(self.FG.port.writable);
+      // self.FG.reader.cancel();
+      // await readableStreamClosed.catch(() => { /* Ignore the error */ });
+      // writer.close();
+      // await writableStreamClosed;
+      // await self.FG.port.close();
+
+      if (self.FG.port) {
+        try {
+          await self.FG.port.close();
+        } catch (e) {
+          console.error(e);
+        }
+        this.markDisconnected();
+      }
     },
   },
 };

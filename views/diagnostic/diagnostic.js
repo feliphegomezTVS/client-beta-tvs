@@ -316,7 +316,5 @@ const Diagnostic = {
       // else this.connectToPort();
       else this.connectToPort();
     },
-
-
   },
 }

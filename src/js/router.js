@@ -489,6 +489,7 @@ const routes = [
 	{ path: '/test/peerjs/receive', component: TestPeerjsReceive, name: 'Test-Peerjs-Receive' },
 	{ path: '/test/peerjs/send', component: TestPeerjsSend, name: 'Test-Peerjs-Send' },
 	{ path: '/test/peerjs-serial/receive', component: TestPeerjsSerialReceive, name: 'Test-Peerjs-Serial-Receive' },
+	{ path: '/test/peerjs-serial/send', component: TestPeerjsSerialSend, name: 'Test-Peerjs-Serial-Send' },
 	{ path: '/:pathMatch(.*)*', name: 'NotFound', component: PageNotFound },
 	// { path: '/*', component: PageNotFound },
 ]
@@ -504,8 +505,10 @@ const router = VueRouter.createRouter({
 	routes, // short for `routes: routes`
 });
 
-router.beforeEach(async (to, from) => {
-  console.log('beforeEach')
+router.beforeEach(async (to, from, next) => {
+  console.log('beforeEach');
+  next();
+  return;
   // console.log('to', to)
   // console.log('from', from)
   // getLoginStatus((response)=>{
