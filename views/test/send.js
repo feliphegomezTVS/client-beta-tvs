@@ -1,4 +1,4 @@
-const TestSend = {
+const TestPeerjsSend = {
     template: require("/views/test/send.html"),
-    mixins: [utilsGlobal,utilsSupplier],
+    mixins: [utilsSupplier],
 }

@@ -486,8 +486,9 @@ const routes = [
 	{ path: '/login', component: Login, name: 'Login' },
 	{ path: '/diagnostic', component: Diagnostic, name: 'Diagnostic' },
 	{ path: '/supplier', component: Supplier, name: 'Supplier' },
-	{ path: '/test/receive', component: TestReceive, name: 'Receive' },
-	{ path: '/test/send', component: TestSend, name: 'Send' },
+	{ path: '/test/peerjs/receive', component: TestPeerjsReceive, name: 'Test-Peerjs-Receive' },
+	{ path: '/test/peerjs/send', component: TestPeerjsSend, name: 'Test-Peerjs-Send' },
+	{ path: '/test/peerjs-serial/receive', component: TestPeerjsSerialReceive, name: 'Test-Peerjs-Serial-Receive' },
 	{ path: '/:pathMatch(.*)*', name: 'NotFound', component: PageNotFound },
 	// { path: '/*', component: PageNotFound },
 ]

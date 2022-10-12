@@ -1,6 +1,7 @@
 <div>
     <router-link to="/diagnostic">Client</router-link>
     <br /><router-link to="/supplier">supplier</router-link>
-    <br /><router-link to="/test/receive">receive</router-link>
-    <br /><router-link to="/test/send">send</router-link>
+    <br /><router-link :to="{name: 'Test-Peerjs-Receive' }">receive</router-link>
+    <br /><router-link :to="{name: 'Test-Peerjs-Send' }">send</router-link>
+    <br /><router-link :to="{name: 'Test-Peerjs-Serial-Receive' }">receive serial</router-link>
 </div>

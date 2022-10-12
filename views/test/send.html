@@ -2,26 +2,22 @@
     <table class="control">
         <tr>
             <td class="title">Status:</td>
-            <td><div class="supplier.status">{{supplier.status}}</div></td>
+            <td><div class="status">{{status}}</div></td>
         </tr>
         <tr>
             <td>
                 <span style="font-weight: bold">ID: </span>
-                <input type="text" v-model="supplier.recvIdInput" title="Input the ID from receive.html">
-                <button @click="joinPeerSupplier">Connect</button>
+                <input type="text" v-model="recvIdInput" title="Input the ID from receive.html">
+                <button @click="joinPeerSupplierToClient">Connect</button>
             </td>
             <td>
-                <input type="text" v-model="supplier.txPeerManual" placeholder="Enter a message..." autofocus="true" />
-                <button type="button" @click="txPeerSupplierManual">Send</button>
+                <input type="text" v-model="txMessageManual" placeholder="Enter a message..." autofocus="true" />
+                <button type="button" @click="txPeerSupplier(txMessageManual)">Send</button>
             </td>
         </tr>
         <tr>
             <td><button type="button" class="control-button" @click="txPeerSupplier('Reset')">Reset</button></td>
             <td><button type="button" class="control-button" @click="txPeerSupplier('Go')">Go</button></td>
-        </tr>
-        <tr>
-            <td><button type="button" class="control-button" @click="txPeerSupplier('Fade')">Fade</button></td>
-            <td><button type="button" class="control-button" @click="txPeerSupplier('Off')">Off</button></td>
         </tr>
     </table>
 </div>

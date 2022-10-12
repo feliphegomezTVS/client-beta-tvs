@@ -1,4 +1,4 @@
-const TestReceive = {
+const TestPeerjsReceive = {
     template: require("/views/test/receive.html"),
-    mixins: [utilsGlobal,utilsClient],
+    mixins: [utilsClient],
 };
