@@ -12,7 +12,8 @@
                 <input type="text" v-model="txMessageManual" placeholder="Enter a message..." autofocus="true" />
                 <button type="button" @click="txPeerClient(txMessageManual)">Send</button>
                 <button type="button" @click="connSerial">Serial Connect</button>
-                <button type="button" @click="testSerialSend">Test Serial</button>
+                <button type="button" @click="testSerialSend('ON')">Test ON</button>
+                <button type="button" @click="testSerialSend('OFF')">Test OFF</button>
                 <button type="button" @click="writeToStream(txMessageManual)">SendSerial</button>
             </td>
         </tr>
