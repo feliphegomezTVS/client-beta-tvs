@@ -28,12 +28,28 @@ class LineBreakTransformer {
     // Flush the stream.
     controller.enqueue(this.container);
   }
-} 
+}
+
+/**
+ * Globlals
+ */
+const utilsGlobal = {
+  methods: {
+    getUrlParam(name) {
+      name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+      var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
+      var results = regex.exec(window.location.href);
+      if (results == null) return null;
+      else return results[1];
+    },
+  }
+};
 
 /**
  * PeerJS
  */
 const utilsGlobalPeerJS = {
+  mixins: [utilsGlobal],
   data: () => ({
     status: null,
     lastPeerId: null,
@@ -50,13 +66,6 @@ const utilsGlobalPeerJS = {
     },
   }),
   methods: {
-    getUrlParam(name) {
-      name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-      var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
-      var results = regex.exec(window.location.href);
-      if (results == null) return null;
-      else return results[1];
-    },
     joinPeerSupplierToClient() {
       let self = this;
       console.log('joinPeerSupplier');
@@ -165,7 +174,7 @@ const utilsGlobalPeerJS = {
           break;
         default:
           console.log('default RX Supplier: ', dataIn);
-          this.txSerialSupplier(dataIn);
+          // this.txSerialSupplier(dataIn); /// SIGUI
           break;
       }
       // BufferArray

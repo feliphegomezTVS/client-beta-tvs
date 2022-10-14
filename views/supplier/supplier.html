@@ -1,0 +1,23 @@
+<div>
+    <table class="control">
+        <tr>
+            <td class="title">Status:</td>
+            <td><div class="status">{{status}}</div></td>
+        </tr>
+        <tr>
+            <td class="title">Status: {{status}}</td>
+            <td><div class="status">{{lastPeerId}}</div></td>
+        </tr>
+        <tr>
+            <td>
+                <span style="font-weight: bold">ID: </span>
+                <input type="text" v-model="recvIdInput" title="Input the ID from receive.html">
+                <button @click="joinPeerSupplierToClient">Connect</button>
+            </td>
+            <td>
+                <input type="text" v-model="txMessageManual" placeholder="Enter a message..." autofocus="true" />
+                <button type="button" @click="txPeerSupplier(txMessageManual)">Send</button>
+            </td>
+        </tr>
+    </table>
+</div>

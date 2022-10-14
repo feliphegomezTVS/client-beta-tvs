@@ -1,0 +1,33 @@
+<div>
+    <table class="display">
+        <tr>
+            <td class="title">Status:</td>
+            <td><div class="status">{{status}}</div></td>
+        </tr>
+        <tr>
+            <td>
+                <div style="font-weight: bold;" title="Copy this ID to the input on send.html.">{{lastPeerId}}</div>
+            </td>
+            <td>
+                <input type="text" v-model="txMessageManual" placeholder="Enter a message..." autofocus="true" />
+                <button type="button" @click="txPeerClient(txMessageManual)">Send</button>
+            </td>
+        </tr>
+        <tr>
+            <td>Status Serial: </td>
+            <td>{{status_serial}}</td>
+        </tr>
+        <tr>
+            <td>Connect Serial: </td>
+            <td>
+                <!-- <button type="button" @click="connSerial" :disabled="(port)">{{status_serial}}</button> -->
+                <button @click="toggleLED">Toggle LED</button>
+            </td>
+        </tr>
+    </table>
+    
+    <p id="explanation">
+        This is the easiest use case. The library handles requesting permission, setting up objects and converting bytes to
+        an array readable by the Serial.read() function of the Arduino.
+    </p>
+</div>
