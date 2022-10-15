@@ -134,18 +134,31 @@ const Client = {
             // requestAccessOnPageLoad: false,
         });
 
-        this.portSerial.on("latency-device-client", function(data) {
-            console.log('latency-device-client', data)
+        this.portSerial.on("latency-device", function(data) {
+            console.log('latency-device', data)
         });
 
         this.portSerial.on("log", function(data) {
             console.log("log: ", data + '\n');
         });
+
+        this.initPingDevice();
       },
 
-      async toggleLED() {
-        const byte = (this.toggleLED = !this.toggleLED) ? 0 : 1
-        this.portSerial.sendEvent('led', byte);
+      async latencyDeviceClient() {
+        this.portSerial.sendEvent('latency-device', true);
       },
+
+      initPingDevice() {
+        let self = this;
+        setInterval(function() {
+            self.latencyDeviceClient();
+        }, 1000);
+      },
+
+    //   async latencyDeviceClient() {
+    //     const byte = (this.toggleLED = !this.toggleLED) ? 0 : 1
+    //     this.portSerial.sendEvent('led', byte);
+    //   },
     },
 };
