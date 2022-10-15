@@ -18,6 +18,7 @@ const Client = {
       
       portSerial: null,
       toggleLED: false,
+      pings: [],
     }),
     mounted() {
         this.initializePeerClient();
@@ -130,23 +131,44 @@ const Client = {
       initSerialPort() {
         this.portSerial = SimpleSerial.connect({
             // requestButton: "request-access",
-            baudRate: 1000000,
+            baudRate: 57600,
             // requestAccessOnPageLoad: false,
+            accessText: "conecte el dispositivo para continuar.",
+            accessButtonLabel: "Conectar D",
+            // transformer:  new LineBreakTransformer(),
+            // requestAccessOnPageLoad: false,
+            logIncomingSerialData: true,
+            logOutgoingSerialData: true,
+            filters: [],
         });
 
-        this.portSerial.on("latency-device", function(data) {
-            console.log('latency-device', data)
+        this.portSerial.on("test-latency-response", function(data) {
+            console.log('test-latency-response', data);
+            console.log('ping response: ', this.pings[data]);
+        });
+
+        this.portSerial.on("data", function(data) {
+            console.log("data: ", data + '\n');
         });
 
         this.portSerial.on("log", function(data) {
             console.log("log: ", data + '\n');
         });
 
-        this.initPingDevice();
+        // const element = document.getElementById("button-test");
+        // this.portSerial.requestSerialAccessOnClick(element);
+        // this.initPingDevice();
       },
 
-      async latencyDeviceClient() {
-        this.portSerial.sendEvent('latency-device', true);
+      async testLatency() {
+        console.log('testLatency', this.pings.length);
+        let i = this.pings.length;
+        this.pings.push({
+          date_send: Date.now(),
+          date_response: null,
+          repeat: 0,
+        });
+        this.portSerial.sendEvent('test-latency', "hola");
       },
 
       initPingDevice() {
