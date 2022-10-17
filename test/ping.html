@@ -133,6 +133,11 @@
         const rounded = Math.round((performance.now() - timestamp));
         document.getElementById("pingback").innerText = "Pingback arrived after ~" + rounded + "ms [#" + pingNumber + "]";
     })
+
+    // setInterval(() => {
+    //     timestamp = performance.now();
+    //     conn.send("ping", 0);
+    // }, 1000)
 </script>
 </body>
 </html>
