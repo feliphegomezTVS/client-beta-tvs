@@ -17,7 +17,7 @@ const Client = {
       },
       
       portSerial: null,
-      toggleLED: false,
+      timestamp: null,
       pings: [],
     }),
     mounted() {
@@ -129,9 +129,9 @@ const Client = {
       },
 
       initSerialPort() {
-        this.portSerial = SimpleSerial.connect({
+        const conn = SimpleSerial.connect({
             // requestButton: "request-access",
-            baudRate: 57600,
+            baudRate: 9600,
             // requestAccessOnPageLoad: false,
             accessText: "conecte el dispositivo para continuar.",
             accessButtonLabel: "Conectar D",
@@ -139,36 +139,30 @@ const Client = {
             // requestAccessOnPageLoad: false,
             logIncomingSerialData: true,
             logOutgoingSerialData: true,
-            filters: [],
+            // filters: [],
+        });
+        
+        conn.on("pong", pingNumber => {
+          const rounded = Math.round((performance.now() - timestamp));
+          let msg = "Pingback arrived after ~" + rounded + "ms [#" + pingNumber + "]";
+          console.log('pong', msg)
         });
 
-        this.portSerial.on("test-latency-response", function(data) {
-            console.log('test-latency-response', data);
-            console.log('ping response: ', this.pings[data]);
-        });
-
-        this.portSerial.on("data", function(data) {
-            console.log("data: ", data + '\n');
-        });
-
-        this.portSerial.on("log", function(data) {
+        conn.on("log", function(data) {
             console.log("log: ", data + '\n');
         });
 
         // const element = document.getElementById("button-test");
         // this.portSerial.requestSerialAccessOnClick(element);
         // this.initPingDevice();
+        this.portSerial = conn;
       },
 
       async testLatency() {
-        console.log('testLatency', this.pings.length);
-        let i = this.pings.length;
-        this.pings.push({
-          date_send: Date.now(),
-          date_response: null,
-          repeat: 0,
-        });
-        this.portSerial.sendEvent('test-latency', "hola");
+        // console.log('testLatency', this.pings.length);
+        this.timestamp = performance.now();
+        this.portSerial.send("ping", 0);
+        console.log('ping', this.timestamp)
       },
 
       initPingDevice() {
